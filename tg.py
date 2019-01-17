@@ -5,6 +5,7 @@ import configparser
 from picamera import PiCamera
 from time import sleep
 import os
+from PIL import Image
 
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -29,6 +30,10 @@ def takephoto():
     camera.capture(filepath)
     camera.stop_preview()
 
+    colorImage = Image.open(filepath)
+    transposed = colorImage.transpose(Image.ROTATE_180)
+    transposed.save(filepath)
+
     return filepath
 
 def start(bot, update):
@@ -48,7 +53,7 @@ def button(bot, update):
     bot.edit_message_text(text="Selected option: {}".format(query.data),
                           chat_id=query.message.chat_id,
                           message_id=query.message.message_id)
-    
+
     if query.data == 'takephoto':
         file = takephoto()
         bot.send_photo(chat_id=query.message.chat_id, photo=open(file, 'rb'))
