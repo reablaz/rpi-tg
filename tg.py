@@ -36,9 +36,21 @@ def takephoto():
 
     return filepath
 
+def takevideo():
+    filepath = '/tmp/video.h264'
+
+    camera = PiCamera()
+    camera.start_preview()
+    camera.start_recording('/home/pi/video.h264')
+    sleep(10)
+    camera.stop_recording()
+    camera.stop_preview()
+
+    return filepath
+
 def start(bot, update):
     keyboard = [[InlineKeyboardButton("RPI Photo", callback_data='takephoto'),
-                 InlineKeyboardButton("Option 2", callback_data='2')],
+                 InlineKeyboardButton("Video", callback_data='takevideo')],
 
                 [InlineKeyboardButton("Option 3", callback_data='3')]]
 
@@ -49,6 +61,7 @@ def start(bot, update):
 
 def button(bot, update):
     query = update.callback_query
+    chatid = query.message.chat_id
 
     bot.edit_message_text(text="Selected option: {}".format(query.data),
                           chat_id=query.message.chat_id,
@@ -56,8 +69,11 @@ def button(bot, update):
 
     if query.data == 'takephoto':
         file = takephoto()
-        bot.send_photo(chat_id=query.message.chat_id, photo=open(file, 'rb'))
+        bot.send_photo(chat_id=chatid, photo=open(file, 'rb'))
         os.remove(file)
+    elif query.data == 'takevideo':
+        file = takevideo()
+        bot.send_video(chat_id=chatid, video=open(file, 'rb'))
 
 def help(bot, update):
     update.message.reply_text("Use /start to test this bot.")
