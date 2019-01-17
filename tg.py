@@ -15,6 +15,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+camera = PiCamera()
 
 def botsend(userid, fpath):
     bot.send_photo(chat_id=userid, photo=open(fpath, 'rb'))
@@ -24,7 +25,6 @@ def botsend(userid, fpath):
 def takephoto():
     filepath = '/tmp/image.jpg'
 
-    camera = PiCamera()
     camera.start_preview()
     sleep(5)
     camera.capture(filepath)
@@ -39,7 +39,6 @@ def takephoto():
 def takevideo():
     filepath = '/tmp/video.h264'
 
-    camera = PiCamera()
     camera.start_preview()
     camera.start_recording('/home/pi/video.h264')
     sleep(10)
