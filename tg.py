@@ -3,7 +3,7 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
 import configparser
 from picamera import PiCamera
-import time
+from time import sleep
 
 config = configparser.ConfigParser()
 config.read('config.ini')
