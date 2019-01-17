@@ -4,6 +4,7 @@ from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
 import configparser
 from picamera import PiCamera
 from time import sleep
+import os
 
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -47,10 +48,11 @@ def button(bot, update):
     bot.edit_message_text(text="Selected option: {}".format(query.data),
                           chat_id=query.message.chat_id,
                           message_id=query.message.message_id)
+    
     if query.data == 'takephoto':
         file = takephoto()
         bot.send_photo(chat_id=query.message.chat_id, photo=open(file, 'rb'))
-
+        os.remove(file)
 
 def help(bot, update):
     update.message.reply_text("Use /start to test this bot.")
