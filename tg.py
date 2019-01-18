@@ -1,12 +1,14 @@
 import logging
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Bot
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
 import configparser
-from picamera import PiCamera
+from picamera import PiCamera, array
 from time import sleep
 import os
-from PIL import Image
+#from PIL import Image
 import subprocess
+import numpy as np
+import threading
 
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -16,6 +18,32 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
+class DetectMotion(array.PiMotionAnalysis):
+    def analyse(self, a):
+        a = np.sqrt(
+            np.square(a['x'].astype(np.float)) +
+            np.square(a['y'].astype(np.float))
+            ).clip(0, 255).astype(np.uint8)
+        # If there're more than 10 vectors with a magnitude greater
+        # than 60, then say we've detected motion
+        if (a > 60).sum() > 10:
+            print('Motion detected!')
+            eb = '131719022'
+            bot = Bot(tg_token)
+            bot.send_message(chat_id=eb, text='motion detected')
+
+
+def checkImage():
+    threading.Timer(30.0, checkImage).start()
+
+    with PiCamera() as camera:
+        with DetectMotion(camera) as output:
+            camera.resolution = (640, 480)
+            camera.start_recording(
+                  '/dev/null', format='h264', motion_output=output)
+            camera.wait_recording(10)
+            camera.stop_recording()
 
 
 def botsend(userid, fpath):
@@ -78,7 +106,7 @@ def button(bot, update):
     query = update.callback_query
     chatid = query.message.chat_id
 
-    bot.edit_message_text(text="Selected option: {}".format(query.data),
+    bot.edit_message_text(text="User " + str(chatid) + " selected option: {}".format(query.data),
                           chat_id=query.message.chat_id,
                           message_id=query.message.message_id)
 
@@ -108,6 +136,8 @@ def main():
     updater.dispatcher.add_handler(CallbackQueryHandler(button))
     updater.dispatcher.add_handler(CommandHandler('help', help))
     updater.dispatcher.add_error_handler(error)
+
+    #checkImage()
 
     # Start the Bot
     updater.start_polling()
