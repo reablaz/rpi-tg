@@ -35,7 +35,7 @@ class DetectMotion(array.PiMotionAnalysis):
 
 
 def checkformotion():
-    threading.Timer(30.0, checkformotion).start()
+    threading.Timer(20.0, checkformotion).start()
 
     logger.warning('checking for motion')
 
