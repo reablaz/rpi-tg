@@ -35,9 +35,9 @@ def takephoto():
 
     camera.close()
 
-    colorImage = Image.open(filepath)
-    transposed = colorImage.transpose(Image.ROTATE_180)
-    transposed.save(filepath)
+    #colorImage = Image.open(filepath)
+    #transposed = colorImage.transpose(Image.ROTATE_180)
+    #transposed.save(filepath)
 
 
     return filepath
