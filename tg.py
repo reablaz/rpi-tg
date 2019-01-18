@@ -30,9 +30,12 @@ def takephoto():
     camera.capture(filepath)
     camera.stop_preview()
 
+    camera.close()
+
     colorImage = Image.open(filepath)
     transposed = colorImage.transpose(Image.ROTATE_180)
     transposed.save(filepath)
+
 
     return filepath
 
@@ -44,6 +47,7 @@ def takevideo():
     sleep(10)
     camera.stop_recording()
     camera.stop_preview()
+    camera.close()
 
     return filepath
 
