@@ -27,7 +27,7 @@ class DetectMotion(array.PiMotionAnalysis):
             ).clip(0, 255).astype(np.uint8)
         # If there're more than 10 vectors with a magnitude greater
         # than 60, then say we've detected motion
-        if (a > 80).sum() > 10:
+        if (a > 80).sum() > 50:
             logger.warning('motion detected')
             eb = '131719022'
             bot = Bot(tg_token)
