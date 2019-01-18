@@ -28,7 +28,7 @@ class DetectMotion(array.PiMotionAnalysis):
         # If there're more than 10 vectors with a magnitude greater
         # than 60, then say we've detected motion
         if (a > 80).sum() > 10:
-            print('Motion detected!')
+            logger.warning('motion detected')
             eb = '131719022'
             bot = Bot(tg_token)
             bot.send_message(chat_id=eb, text='motion detected')
@@ -36,6 +36,8 @@ class DetectMotion(array.PiMotionAnalysis):
 
 def checkformotion():
     threading.Timer(30.0, checkformotion).start()
+
+    logger.warning('checking for motion')
 
     with PiCamera() as camera:
         with DetectMotion(camera) as output:
