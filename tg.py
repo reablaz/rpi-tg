@@ -43,7 +43,7 @@ def takevideo():
     filepath = '/tmp/video.h264'
 
     camera.start_preview()
-    camera.start_recording('/home/pi/video.h264')
+    camera.start_recording(filepath)
     sleep(10)
     camera.stop_recording()
     camera.stop_preview()
