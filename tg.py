@@ -6,6 +6,7 @@ from picamera import PiCamera
 from time import sleep
 import os
 from PIL import Image
+import subprocess
 
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -45,7 +46,7 @@ def takevideo():
     filepath = '/tmp/video.h264'
 
     camera = PiCamera()
-    
+
     camera.start_preview()
     camera.start_recording(filepath)
     sleep(10)
@@ -53,7 +54,14 @@ def takevideo():
     camera.stop_preview()
     camera.close()
 
-    return filepath
+    mp4path = '/tmp/video.mp4'
+
+    ps = subprocess.Popen(('/usr/bin/MP4Box', '-fps', '30', '-add', filepath, mp4path), stdout=subprocess.PIPE)
+    ps.wait()
+
+    os.remove(filepath)
+
+    return mp4path
 
 def start(bot, update):
     keyboard = [[InlineKeyboardButton("RPI Photo", callback_data='takephoto'),
@@ -81,6 +89,7 @@ def button(bot, update):
     elif query.data == 'takevideo':
         file = takevideo()
         bot.send_video(chat_id=chatid, video=open(file, 'rb'))
+        os.remove(file)
 
 def help(bot, update):
     update.message.reply_text("Use /start to test this bot.")
