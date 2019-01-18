@@ -34,8 +34,8 @@ class DetectMotion(array.PiMotionAnalysis):
             bot.send_message(chat_id=eb, text='motion detected')
 
 
-def checkImage():
-    threading.Timer(30.0, checkImage).start()
+def checkformotion():
+    threading.Timer(30.0, checkformotion).start()
 
     with PiCamera() as camera:
         with DetectMotion(camera) as output:
@@ -137,7 +137,7 @@ def main():
     updater.dispatcher.add_handler(CommandHandler('help', help))
     updater.dispatcher.add_error_handler(error)
 
-    #checkImage()
+    checkformotion()
 
     # Start the Bot
     updater.start_polling()
